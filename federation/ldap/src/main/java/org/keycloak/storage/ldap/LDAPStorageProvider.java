@@ -39,14 +39,13 @@ import org.keycloak.credential.CredentialModel;
 import org.keycloak.federation.kerberos.impl.KerberosUsernamePasswordAuthenticator;
 import org.keycloak.federation.kerberos.impl.SPNEGOAuthenticator;
 import org.keycloak.models.*;
+import org.keycloak.models.cache.CachedUserModel;
 import org.keycloak.models.utils.DefaultRoles;
 import org.keycloak.models.utils.ReadOnlyUserModelDelegate;
 import org.keycloak.policy.PasswordPolicyManagerProvider;
 import org.keycloak.policy.PolicyError;
 import org.keycloak.models.cache.UserCache;
 import org.keycloak.models.credential.PasswordUserCredentialModel;
-import org.keycloak.models.utils.KeycloakModelUtils;
-import org.keycloak.models.utils.ReadOnlyUserModelDelegate;
 import org.keycloak.storage.ReadOnlyException;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
@@ -158,6 +157,9 @@ public class LDAPStorageProvider implements UserStorageProvider,
         UserModel existing = userManager.getManagedProxiedUser(local.getId());
         if (existing != null) {
             return existing;
+        }
+        if (local instanceof CachedUserModel) {
+            return local;
         }
 
         UserModel proxied = local;
